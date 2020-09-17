@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=scr, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+
+    <h1>Jeu des allumettes</h1>
+
+    <div class="container">
+        <p id="p1">Joueur 1</p>
+        <p id="p2">Joueur 2</p>
+        <div id="allumettes"></div>
+        <label>Rentrer le nombre d'allumettes à retirer :
+            <input id="nb" value="1" type="number" min="1" max="3" />
+        </label>
+        <button>Valider</button>
+    </div>
+    <script>
+        let alumettes
+        let isJoueur1
+
+        // Déclare la fonction qui met à jour la représentation des allumettes à l'écran. 
+        function afficherAllumettes() {
+            document
+                .querySelector('#allumettes') // Je sélectionne la div avec l'id allumettes
+                .innerHTML = alumettes.join(' ') // permet d'ajouter des espaces entre les allumettes. 
+        }
+
+        // Déclare la fonction qui affiche le joueur actif. 
+        function afficherJoueur() {
+            // On montre / cache en utilisant le css
+            // (on aurait aussi pu changer le contenu d'une  balise HTML unique)  
+            // Si le joueur actif est le joueur 1, #p1 sera en visible (style : block), et #p2 sera invisible, sinon l'inverse.
+            document
+                .querySelector('#p1').style.display = (isJoueur1 ? "block" : "none")
+            document
+                .querySelector('#p2').style.display = (isJoueur1 ? "none" : "block")
+        }
+
+        // Déclare la fonction qui (ré)initialise l'état interne du jeu. 
+        function demarrerPartie() {
+            // Le joueur 1 démarre
+            isJoueur1 = true
+
+            // On démare avec 10 allumettes
+            alumettes = []
+            for (let i = 0; i < 10; i++) {
+                alumettes.push('|')
+            }
+            // Met à jour l'affichage en fontion du nouvel état.
+            afficherAllumettes()
+            afficherJoueur()
+        }
+
+        // Déclare la fonction qui change le joueur courant. 
+        function alternerJoueur() {
+            isJoueur1 = !isJoueur1 // True devient false et false devient true.
+            afficherJoueur()
+        }
+
+        // Déclare la fonction qui indique le perdant
+        function afficherPerdant() {
+            if (isJoueur1) {
+                // Si lorsque la dernière allumette est retiré c'est le joueur 1 qui est actif cela veut dire qu'il a perdu
+                alert("Le joueur 1 a perdu ! Une partie est relancée automatiquement")
+            } else {
+                // Sinon, c'est forcément le joueur 2 et donc on affiche un message pour dire au joueur  2 qu'il a perdu. 
+                alert("Le joueur 2 a perdu ! Une partie est relancée automatiquement")
+            }
+        }
+
+        const button = document
+            // Je récupère mon button dans le html
+            .querySelector('button')
+            .addEventListener('click', function() { // Je déclenche une fonction au clic
+                // On est garanti que la valeur est bien numérique et inférieur à 3 grâce à l'usage de l'input de type number
+                const nbARetirer = parseInt(document
+                        .querySelector('#nb') // Je récupère la valeur du nombre d'allumettes à retirer grâce à lID de l'input
+                        .value, 10) // je convertie la valeur en base 10
+
+                // On vérifie qu'il reste assez d'allumettes à retirer. 
+                let restantes = alumettes.length // compte dans le tableau le nombre d'éléments restant avec length
+                if (restantes < nbARetirer) {
+                    // Si la valeur du nombre d'allumettes restante est inférieur au nombre d'allumettes choisi par l'utilisateur, alors j'affiche un message d'erreur sous forme d'alert. 
+                    alert("Plus assez d'allumettes !")
+                        // On attend que le joueur essaie de nouveau. 
+                    return
+                }
+
+                // On enlève n éléments du tableau
+                alumettes.splice(0, nbARetirer)
+                afficherAllumettes()
+
+                restantes = alumettes.length
+                if (restantes === 0) {
+                    // si il ne reste plus d'allumettes, j'apelle la fonction qui affiche le perdant, et je redémare automatiquement une partie. 
+                    afficherPerdant()
+                    demarrerPartie()
+                    return
+                }
+                // prépare le tour suivant
+                alternerJoueur()
+            })
+            // Maintenant que toutes les fonctions nécéssaires ont été déclarées, on peut démarer la partie. 
+        demarrerPartie()
+    </script>
+
+
+</body>
+
+
+<!--  Pour cet algo j'ai eu beaucoup de mal au début, je ne parvenais même pas à retirer des alumettes. Une fois que j'ai réussi cela,
+ j'ai rapidement réussi à faire en sorte de pouvoir alterner entre joueur 1 et joueur 2, afficher un message d'erreursi on désire retirer plus d'allumettes qu'il n'en reste , 
+ et afficher un message pour donner le nom du gagnant. J'ai ensuite rapidement trouver comment faire en sorte que le jeu se relance automatiquement. 
+
+L'algo difficile ? Oui et non, tout d'abordcela dépend des algorithmes, ça dépend aussi de ce qu'il faut utiliser. ce qu'on à fait Lundi était globalement assez simple mais je reconnais 
+que j'ai trouvé que l'exercice final de Vendredi était un peu trop différent de ce qu'on avait déja fait auparavant. -->
+
+</html>
